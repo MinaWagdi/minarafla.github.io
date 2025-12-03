@@ -16,6 +16,7 @@ const cvData = {
             I hold a PhD in Computer Science and a degree in Computer Engineering. 
             I'm passionate about developing AI and machine learning solutions, with a strong enthusiasm for coding.
         `,
+        heroIntro: `Hi, I'm Mina—a Data Scientist and Machine Learning researcher passionate about building AI solutions that make a real impact. Currently working at Autobiz, I develop ML models for vehicle valuation and explore innovative approaches to uplift modeling. When I'm not coding, I'm usually learning something new or sharing my thoughts through writing.`
     },
 
     // Work Experience

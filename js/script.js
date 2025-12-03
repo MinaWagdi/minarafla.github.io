@@ -249,6 +249,20 @@ function generateBlogPreview() {
     });
 }
 
+// Generate Hero/Intro section
+function generateHero() {
+    const heroContent = document.getElementById('hero-content');
+    if (!heroContent || typeof cvData === 'undefined' || !cvData.personalInfo) return;
+    
+    const heroIntro = cvData.personalInfo.heroIntro || cvData.personalInfo.aboutMe || '';
+    
+    heroContent.innerHTML = `
+        <div class="hero-text">
+            <p class="hero-intro">${heroIntro.trim()}</p>
+        </div>
+    `;
+}
+
 // Generate CV sections from data
 function generateCVSections() {
     if (typeof cvData === 'undefined') return;
@@ -395,7 +409,7 @@ function setupCVNavigation() {
     }
     
     const navLinks = cvNav.querySelectorAll('.cv-nav-link');
-    const sections = ['work-experience', 'education', 'publications', 'skills', 'highlights'];
+    const sections = ['hero', 'recent-posts', 'highlights', 'work-experience', 'education', 'publications'];
     
     // Handle click events for smooth scrolling (only for section anchors)
     navLinks.forEach(link => {
@@ -451,6 +465,14 @@ function setupCVNavigation() {
         // Get only section links (those starting with #)
         const sectionLinks = Array.from(navLinks).filter(l => l.getAttribute('href').startsWith('#'));
         
+        // Special handling for top of page (hero section)
+        if (scrollPosition < 200) {
+            sectionLinks.forEach(l => l.classList.remove('active'));
+            const heroLink = Array.from(navLinks).find(l => l.getAttribute('href') === '#hero');
+            if (heroLink) heroLink.classList.add('active');
+            return;
+        }
+        
         sections.forEach((sectionId, index) => {
             const section = document.getElementById(sectionId);
             if (section) {
@@ -461,9 +483,8 @@ function setupCVNavigation() {
                     // Remove active state from all section links
                     sectionLinks.forEach(l => l.classList.remove('active'));
                     // Add active state to current section link
-                    if (sectionLinks[index]) {
-                        sectionLinks[index].classList.add('active');
-                    }
+                    const currentLink = Array.from(navLinks).find(l => l.getAttribute('href') === `#${sectionId}`);
+                    if (currentLink) currentLink.classList.add('active');
                 }
             }
         });
@@ -509,6 +530,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     loadHeader();
     loadFooter();
+    
+    // Generate hero section
+    generateHero();
     
     // Generate blog listing (for blog.html) or preview (for index.html)
     generateBlogListing();
