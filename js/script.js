@@ -395,7 +395,7 @@ function setupCVNavigation() {
     }
     
     const navLinks = cvNav.querySelectorAll('.cv-nav-link');
-    const sections = ['work-experience', 'education', 'publications', 'skills', 'highlights'];
+    const sections = ['recent-posts', 'work-experience', 'education', 'highlights', 'publications'];
     
     // Handle click events for smooth scrolling (only for section anchors)
     navLinks.forEach(link => {
