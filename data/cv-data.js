@@ -45,19 +45,19 @@ const cvData = {
     education: [
         {
             degree: 'PhD in Computer Science',
-            institution: 'Université de Caen Normandie',
+            institution: 'Université de Caen Normandie, Caen, France',
             period: '2020 - 2023',
             // description: 'Additional details, GPA, honors, or relevant coursework.'
         },
         {
             degree: 'Masters in Data Science',
-            institution: 'Polytech Nantes, Université de Nantes',
+            institution: 'Polytech Nantes, Université de Nantes, Nantes, France',
             period: '2019 - 2020',
             // description: 'Additional details or achievements.'
         },
         {
             degree: 'Bachelor in Computer Engineering (Bac+5)',
-            institution: 'Ain Shams University',
+            institution: 'Ain Shams University, Cairo, Egypt',
             period: '2014 - 2019',
             // description: 'Additional details or achievements.'
         }
