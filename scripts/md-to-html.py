@@ -19,7 +19,7 @@ def convert_markdown_to_html(md_file):
     import subprocess
     try:
         result = subprocess.run(
-            ['pandoc', md_file, '-f', 'markdown', '-t', 'html', '--wrap=none'],
+            ['pandoc', md_file, '-f', 'markdown+raw_html', '-t', 'html', '--wrap=none'],
             capture_output=True,
             text=True,
             check=True
@@ -33,7 +33,8 @@ def convert_markdown_to_html(md_file):
         import markdown
         with open(md_file, 'r', encoding='utf-8') as f:
             md_content = f.read()
-        html_content = markdown.markdown(md_content, extensions=['fenced_code', 'tables'])
+        # Use 'extra' extension which includes raw HTML support
+        html_content = markdown.markdown(md_content, extensions=['extra', 'fenced_code', 'tables'])
         return html_content
     except ImportError:
         print("Error: Neither pandoc nor python-markdown is installed.")

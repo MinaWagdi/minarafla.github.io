@@ -17,7 +17,14 @@ const blogArticles = [
         title: 'Intuitive Introduction for Attention Models',
         excerpt: 'An intuitive introduction to attention models in RNN seq2seq models, explaining why we need attention and how it works.',
         date: '2025-12-08',
-        hasThumbnail: false
+        hasThumbnail: true
     },
+    {
+        folder: 'andrew-ng-ml-notes',
+        title: 'Andrew Ng Machine Learning Course Notes',
+        excerpt: 'My handwritten notes from Andrew Ng\'s Machine Learning first course on Coursera.',
+        date: '2025-12-08',
+        hasThumbnail: true
+    }
 ];
 
