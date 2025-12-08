@@ -42,19 +42,21 @@ Using the weights we calculate a weighted average of them, that leads to a conte
 ![Context vecotr](images/context_vectors.png)
 This time, the decoder to calculate a new state vector, instead of using only the new input $x'$ and the previous state, it also uses the context vector of the current step. The context vector is the weighted average of all the hidden state of the encoder, so now the decoder knows where to focus in the encoder to perform the translation task.
 
-$$c_0 = \alpha_1 \cdot h_1 + \alpha_2 \cdot h_2 + \ldots + \alpha_m \cdot h_m$$
+$$c_0 = α1 \cdot h_1 + α2 \cdot h_2 + \ldots + αm \cdot h_m$$
 
 Then $s_0$ takes as input the current decoder's input, the previous state $s$ and the previous context vector. 
 
 For example:
+$$c_1 = α1 \cdot h_1 + α2 \cdot h_2 + \ldots + αm \cdot h_m$$
 $$S_2 = \tanh(A' \cdot [x'_2, s_1, c_1])$$
 
+**Note:** The attention weights (α₁, α₂, ..., αₘ) used to calculate $c_1$ are **not the same** as the attention weights used to calculate $c_0$. I used the same symbols (α) for simplification. However, at each step, **new attention weights** are calculated using the align function between the current decoder state $s_t$ and all the hidden states of the encoder ($h_1$ to $h_m$).
 
 A question to challenge your understanding:
-What is the total number of $\alpha$ values we have to compute?
+What is the total number of attention weights (α values) we have to compute?
 
 Answer:
-At each step we compute $m$ $\alpha$ values, so in total we will have $t \cdot m$ $\alpha$ values.
+At each step we compute $m$ attention weights (α₁, α₂, ..., αₘ), so in total we will have $t \cdot m$ attention weights, where $t$ is the number of decoder steps and $m$ is the number of encoder hidden states.
 
 
 ## References

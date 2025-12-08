@@ -267,7 +267,12 @@ function generateWorkExperience() {
     
     container.innerHTML = '';
     cvData.workExperience.forEach(job => {
-        const descriptionList = job.description.map(item => `<li>${item}</li>`).join('');
+        // Only show description if it exists and has items
+        const hasDescription = job.description && job.description.length > 0;
+        const descriptionHTML = hasDescription 
+            ? `<ul class="item-description">${job.description.map(item => `<li>${item}</li>`).join('')}</ul>`
+            : '';
+        
         const jobHTML = `
             <article class="timeline-item">
                 <div class="timeline-marker"></div>
@@ -275,7 +280,7 @@ function generateWorkExperience() {
                     <h3 class="item-title">${job.title}</h3>
                     <p class="item-organization">${job.organization}</p>
                     <p class="item-period">${job.period}</p>
-                    <ul class="item-description">${descriptionList}</ul>
+                    ${descriptionHTML}
                 </div>
             </article>
         `;

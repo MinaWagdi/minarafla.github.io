@@ -24,11 +24,11 @@ const cvData = {
             title: 'Data scientist',
             organization: 'Autobiz',
             period: '03/2024 - Present',
-            description: [
-                'Developed and optimized ML models for used vehicle pricing and identification',
-                'Packaged and deployed ML models to ensure seamless integration with internal processes',
-                'Utilized LLMs, NER, and Sentence Transformer models for entity extraction, semantic matching, and text representation in a key enterprise project.'
-            ]
+            // description: [
+            //     // 'Developed and optimized ML models for used vehicle pricing and identification',
+            //     // 'Packaged and deployed ML models to ensure seamless integration with internal processes',
+            //     // 'Utilized LLMs, NER, and Sentence Transformer models for entity extraction, semantic matching, and text representation in a key enterprise project.'
+            // ]
         },
         {
             title: 'PhD/Researcher in Machine learning',
