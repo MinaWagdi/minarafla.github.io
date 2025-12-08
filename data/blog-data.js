@@ -19,26 +19,5 @@ const blogArticles = [
         date: '2025-12-08',
         hasThumbnail: false
     },
-    // {
-    //     folder: 'ml-basics',
-    //     title: 'Machine Learning Basics',
-    //     excerpt: 'Exploring core concepts of machine learning algorithms and their practical applications in data science.',
-    //     date: '2024-01-15',
-    //     hasThumbnail: true
-    // },
-    // {
-    //     folder: 'neural-networks',
-    //     title: 'Neural Networks Explained',
-    //     excerpt: 'Understanding how neural networks process information through layers and activation functions.',
-    //     date: '2024-01-10',
-    //     hasThumbnail: false
-    // },
-    // {
-    //     folder: 'data-viz',
-    //     title: 'Data Visualization Guide',
-    //     excerpt: 'Best practices for creating clear and effective visualizations that communicate insights effectively.',
-    //     date: '2024-01-05',
-    //     hasThumbnail: true
-    // }
 ];
 
