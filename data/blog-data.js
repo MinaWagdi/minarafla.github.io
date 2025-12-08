@@ -12,6 +12,13 @@
  */
 
 const blogArticles = [
+    {
+        folder: 'attention_models',
+        title: 'Intuitive Introduction for Attention Models',
+        excerpt: 'An intuitive introduction to attention models in RNN seq2seq models, explaining why we need attention and how it works.',
+        date: '2025-12-08',
+        hasThumbnail: false
+    },
     // {
     //     folder: 'ml-basics',
     //     title: 'Machine Learning Basics',

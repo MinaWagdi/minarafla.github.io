@@ -1,0 +1,68 @@
+# Example Blog Article
+
+This is an example Markdown file to show you how to write blog posts.
+
+## Introduction
+
+This article demonstrates the Markdown syntax and structure you can use for your blog posts. Writing in Markdown is much easier than writing HTML directly!
+
+## Why Markdown?
+
+Here are some benefits:
+
+- **Simple syntax** - No closing tags needed
+- **Easy to read** - Looks like plain text
+- **Fast to write** - Focus on content, not formatting
+- **Convertible** - Can be converted to HTML automatically
+
+## Code Examples
+
+You can include code blocks with syntax highlighting:
+
+```python
+def greet(name):
+    """Greet someone by name"""
+    return f"Hello, {name}!"
+
+print(greet("World"))
+```
+
+## Formatting Text
+
+You can use **bold text**, *italic text*, and `inline code` easily.
+
+## Lists
+
+### Unordered List
+- Item 1
+- Item 2
+  - Nested item
+- Item 3
+
+### Ordered List
+1. First step
+2. Second step
+3. Third step
+
+## Links and Images
+
+You can add [links](https://example.com) and images:
+
+![Example image](image.jpg)
+
+## Blockquotes
+
+> This is a quote or important note.
+> It can span multiple lines.
+
+## Conclusion
+
+This example shows the basic Markdown syntax. For more details, see the `BLOG_WRITING_GUIDE.md` file.
+
+---
+
+**Next steps:**
+1. Write your article in Markdown
+2. Convert it to HTML using the provided scripts
+3. Add it to your blog!
+
