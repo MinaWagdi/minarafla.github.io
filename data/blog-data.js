@@ -13,6 +13,13 @@
 
 const blogArticles = [
     {
+        folder: 'self_attention_models',
+        title: 'Self-Attention Models',
+        excerpt: 'An intuitive introduction to self-attention models, explaining why we need self-attention and how it works.',
+        date: '2025-12-10',
+        hasThumbnail: true
+    },
+    {
         folder: 'attention_models',
         title: 'Intuitive Introduction for Attention Models',
         excerpt: 'An intuitive introduction to attention models in RNN seq2seq models, explaining why we need attention and how it works.',

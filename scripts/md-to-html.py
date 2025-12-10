@@ -59,12 +59,34 @@ def update_article_html(md_file, html_content):
         template = f.read()
     
     # Find and replace article content
-    # Look for the article-content div
-    pattern = r'(<div class="article-content">)(.*?)(</div>)'
+    # Use a simpler approach: find the div and replace its content
+    # Find the opening and closing tags
+    start_marker = '<div class="article-content">'
+    end_marker = '</div>'
     
-    # Replace content between the div tags
-    replacement = r'\1\n' + html_content + r'\n                \3'
-    updated_template = re.sub(pattern, replacement, template, flags=re.DOTALL)
+    start_idx = template.find(start_marker)
+    if start_idx == -1:
+        print(f"Error: Could not find article-content div in template")
+        sys.exit(1)
+    
+    # Find the matching closing div (need to handle nested divs)
+    # For simplicity, find the first </div> after the opening tag
+    # that's at the same indentation level
+    content_start = start_idx + len(start_marker)
+    
+    # Find the closing div - look for </div> that matches our opening
+    # We'll use a simple approach: find the next </div> after some content
+    end_idx = template.find(end_marker, content_start)
+    if end_idx == -1:
+        print(f"Error: Could not find closing div in template")
+        sys.exit(1)
+    
+    # Replace the content between the divs
+    updated_template = (
+        template[:content_start] + 
+        '\n' + html_content + '\n                ' + 
+        template[end_idx:]
+    )
     
     # Write to output file
     with open(output_file, 'w', encoding='utf-8') as f:

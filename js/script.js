@@ -184,8 +184,13 @@ function generateBlogListing() {
         return;
     }
     
+    // Sort articles by date (newest first)
+    const sortedArticles = [...blogArticles].sort((a, b) => {
+        return new Date(b.date) - new Date(a.date);
+    });
+    
     // Generate HTML for each article
-    blogArticles.forEach(article => {
+    sortedArticles.forEach(article => {
         const articleHTML = `
             <article class="blog-item ${article.hasThumbnail ? '' : 'no-image'}">
                 <a href="blog/${article.folder}/index.html" class="blog-link">
