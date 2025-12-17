@@ -2,9 +2,11 @@
 
 Hi there, in this post, I present my notes on self-attention models, building upon the attention mechanism discussed in my previous article. This content is based on Shusen Wang's explanations of self-attention with RNNs, combined with insights from other resources. For more details on the basic attention mechanism, see my [introduction article to attention models](../attention_models/).
 
-## What is Self-Attention?
+## What is Attention?
 
 Attention models (as previously discussed) when combined with the encoder and decoder RNNs allow tokens from the RNN decoder, at each step, to pay attention to all of the outputs of the encoder RNN. For translation tasks, this is useful when translating a word, to know where to look in the encoder part. Then it calculates similarities and weights, to give a weight for each token from the encoder as a relevance criteria to the current step.
+
+## What is Self-Attention?
 
 **Self-attention is an extension of the attention mechanism.** In other words, the attention mechanism when applied on a single RNN, allows each token to take a look (pay attention) on all other tokens from the same RNN.
 
@@ -42,7 +44,7 @@ In a simple RNN as in our previous article, $h_1$ is a function of $h_0$ and $x_
 
 $$h_1 = \tanh(A \cdot [x_1, c_0])$$
 
-The context vector is a weighted average of all the previous hidden states. At the beginning, $c_0 = h_1$ since there is no previous $h_i$ vectors. 
+The context vector is a weighted average of all the previous hidden states. At the beginning, $c_0 = 0$ and $c_1 = h_1$ since there is no previous $h_i$ vectors. 
 
 A weighted average implies weights for each hidden state. Each weight is calculated with the align function (it's like a similarity function, the bigger the similarity is, the bigger the weight). In general, the weights $\alpha$ are calculated as:
 
@@ -56,13 +58,13 @@ $$\alpha_{1,1} = \text{align}(h_1, h_1)$$
 
 ![Self-Attention Step 2: Attention scores over two tokens](images/SA_2.png)
 
-*Figure: At step 2, the token computes attention weights with respect to all previous and current tokens' hidden states.*
+*Figure: At step 2, the token computes attention weights with respect to all previous and current tokens' hidden states. Note the weights are different than the weights of the first step.*
 
 Next, $h_2$ is calculated as:
 
 $$h_2 = \tanh(A \cdot [x_2, c_1])$$
 
-So $h_2$ knows both $x_2$ and $x_1$.
+So $h_2$ knows both $x_2$ and $x_1$ through the context vector.
 
 To calculate the context vector $c_2$, we need to calculate a weighted average of all the present hidden states. So we should first calculate weights:
 
