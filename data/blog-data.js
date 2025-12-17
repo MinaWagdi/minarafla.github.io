@@ -14,9 +14,9 @@
 const blogArticles = [
     {
         folder: 'self_attention_models',
-        title: 'Self-Attention Models',
+        title: 'Self-Attention Models - part 1',
         excerpt: 'An intuitive introduction to self-attention models, explaining why we need self-attention and how it works.',
-        date: '2025-12-10',
+        date: '2025-12-17',
         hasThumbnail: true
     },
     {
