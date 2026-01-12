@@ -12,7 +12,7 @@ const cvData = {
         title: 'Data scientist, PhD',
         photo: 'images/my_photo.jpg',
         aboutMe: `
-            Hi, I'm Mina—a Data Scientist at Autobiz, the European leader in vehicle valuation.
+            Hi, I'm Mina—a Data Scientist.
             I hold a PhD in Computer Science and a degree in Computer Engineering. 
             I'm passionate about developing AI and machine learning solutions, with a strong enthusiasm for coding.
         `,
