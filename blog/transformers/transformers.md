@@ -1,6 +1,6 @@
 ---
 title: "Transformers architecture Part 1"
-date: 2025-05-10
+date: 2026-05-10
 excerpt: "Deconstructing the Transformer: A Deep Dive into Attention Mechanics"
 thumbnail: true
 ---
