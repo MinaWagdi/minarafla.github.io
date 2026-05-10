@@ -19,7 +19,7 @@ First I will explain what is the Query, Key and Value to build one self attentio
 
 At its heart, the self-attention mechanism allows each token to pay attention to all other tokens regardless of the distance between them. Unlike earlier sequential models, Transformers create representations where words are encoded as a function of their context - which is useful when the same word can have different meanings depedending on its surrounding words.
 
-===A VOIR== To achieve this, the model needs a way for a token to attend to another. We measure similarity between a given query ($q$) and each of the other $n$ keys ($K_i$). The model then weights the associated values ($V_i$) by their similarity. 
+To achieve this, the model needs a way for a token to attend to another. We measure similarity between a given query ($q$) and each of the other $n$ keys ($K_i$). The model then weights the associated values ($V_i$) by their similarity.
 
 ### But first, what is a query, key and value ? 
 A helpful analogy is to imagine a database search:

@@ -3,9 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Andrew Ng Machine Learning Course Notes">
-    <title>Andrew Ng Machine Learning Course Notes</title>
+    <meta name="description" content="Andrew Ng Machine Learning Course Notes - Mina Rafla's Blog">
+    <meta property="og:title" content="Andrew Ng Machine Learning Course Notes">
+    <meta property="og:description" content="My handwritten notes from Andrew Ng Machine Learning first course on Coursera.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://minarafla.github.io/blog/andrew-ng-ml-notes/">
+    <meta property="og:site_name" content="Mina Rafla">
+    <title>Andrew Ng Machine Learning Course Notes - Mina Rafla</title>
     <link rel="stylesheet" href="../../styles.css">
+    
+    <!-- KaTeX for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 </head>
 <body>
     <!-- Header loaded dynamically -->
@@ -28,12 +38,9 @@
 
                 <!-- Article Content -->
                 <div class="article-content">
-<p>This PDF contains my handwritten notes from Andrew Ng's Machine Learning first course on Coursera.</p><h2 id="view-notes">View Notes</h2>
-<div class="pdf-container">
-    <iframe src="notes.pdf" width="100%" height="100%">
-        <p>Your browser does not support PDFs. <a href="notes.pdf">Download the PDF</a> instead.</p>
-    </iframe>
-</div><h2 id="download-notes">Download Notes</h2><p>📄 <strong><a href="notes.pdf">Download PDF Notes</a></strong> (Right-click and “Save As” to download)</p>
+<h1 id="andrew-ng-machine-learning-course-notes">Andrew Ng Machine Learning Course Notes</h1><p>This PDF contains my handwritten notes from Andrew Ng’s Machine Learning first course on Coursera.</p><h2 id="view-notes">View Notes</h2><div class="pdf-container"><pre><code>&lt;iframe src=&quot;notes.pdf&quot; width=&quot;100%&quot; height=&quot;100%&quot;&gt;
+    &lt;p&gt;Your browser does not support PDFs. &lt;a href=&quot;notes.pdf&quot;&gt;Download the PDF&lt;/a&gt; instead.&lt;/p&gt;
+&lt;/iframe&gt;</code></pre></div><h2 id="download-notes">Download Notes</h2><p>📄 <strong><a href="notes.pdf">Download PDF Notes</a></strong> (Right-click and “Save As” to download)</p>
 
                 </div>
             </article>
@@ -45,6 +52,23 @@
 
     <script src="../../data/cv-data.js"></script>
     <script src="../../js/script.js"></script>
+    
+    <!-- Render math equations with KaTeX -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (typeof renderMathInElement !== 'undefined') {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false},
+                        {left: '\\[', right: '\\]', display: true},
+                        {left: '\\(', right: '\\)', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        });
+    </script>
 </body>
 </html>
 

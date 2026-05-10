@@ -21,14 +21,14 @@ const blogArticles = [
     },
 {
         folder: 'self_attention_models',
-        title: 'Self-Attention Models in RNN seq2seq models',
+        title: 'Self-Attention vs. Masked Self-Attention: A Step-by-Step Introduction',
         excerpt: 'An intuitive introduction to self-attention models, explaining why we need self-attention and how it works.',
         date: '2025-12-17',
         hasThumbnail: true
     },
     {
         folder: 'attention_models',
-        title: 'Intuitive Introduction for Attention Models in RNN seq2seq models',
+        title: 'Attention in Seq2Seq Models and the Align Function',
         excerpt: 'An intuitive introduction to attention models in RNN seq2seq models, explaining why we need attention and how it works.',
         date: '2025-12-08',
         hasThumbnail: true

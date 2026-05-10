@@ -65,92 +65,73 @@ function getBasePath() {
     return './';
 }
 
-// Load header component
-function loadHeader() {
+// Post-process header HTML once inserted into the DOM
+function initHeader(basePath) {
     const headerPlaceholder = document.getElementById('header-placeholder');
-    if (!headerPlaceholder) return;
-    
-    const basePath = getBasePath();
-    fetch(basePath + 'components/header.html')
-        .then(response => response.text())
-        .then(html => {
-            headerPlaceholder.innerHTML = html;
-            
-            // Fix paths based on current location
-            const header = headerPlaceholder.querySelector('.header');
-            if (header) {
-                // Fix image path
-                const img = header.querySelector('#profile-photo');
-                if (img) {
-                    img.src = basePath + 'images/my_photo.jpg';
-                }
-                
-                // Fix navigation links
-                const homeLink = header.querySelector('#header-home-link');
-                const nameLink = header.querySelector('#header-name-link');
-                const navHome = header.querySelector('#nav-home');
-                const navBlog = header.querySelector('#nav-blog');
-                
-                if (homeLink) homeLink.href = basePath + 'index.html';
-                if (nameLink) nameLink.href = basePath + 'index.html';
-                if (navHome) navHome.href = basePath + 'index.html';
-                if (navBlog) navBlog.href = basePath + 'blog.html';
-                
-                // Set active navigation state
-                const currentPage = window.location.pathname;
-                if (currentPage.includes('blog.html') || currentPage.includes('/blog/')) {
-                    if (navBlog) navBlog.classList.add('active');
-                    if (navHome) navHome.classList.remove('active');
-                } else {
-                    if (navHome) navHome.classList.add('active');
-                    if (navBlog) navBlog.classList.remove('active');
-                }
-                
-                // Populate professional title and about me from CV data
-                if (typeof cvData !== 'undefined' && cvData.personalInfo) {
-                    const titleElement = header.querySelector('#professional-title');
-                    const aboutMeElement = header.querySelector('#about-me-text');
-                    
-                    if (titleElement && cvData.personalInfo.title) {
-                        titleElement.textContent = cvData.personalInfo.title;
-                    }
-                    
-                    if (aboutMeElement && cvData.personalInfo.aboutMe) {
-                        aboutMeElement.textContent = cvData.personalInfo.aboutMe;
-                    }
-                }
-            }
-            
-            // Re-initialize photo error handler
-            initPhotoHandler();
-            
-            // Setup theme toggle after header loads
-            setupThemeToggle();
-        })
-        .catch(error => {
-            console.error('Error loading header:', error);
-        });
+    const header = headerPlaceholder.querySelector('.header');
+    if (!header) return;
+
+    const img = header.querySelector('#profile-photo');
+    if (img) img.src = basePath + 'images/my_photo.jpg';
+
+    const homeLink = header.querySelector('#header-home-link');
+    const nameLink = header.querySelector('#header-name-link');
+    const navHome  = header.querySelector('#nav-home');
+    const navBlog  = header.querySelector('#nav-blog');
+
+    if (homeLink) homeLink.href = basePath + 'index.html';
+    if (nameLink) nameLink.href = basePath + 'index.html';
+    if (navHome)  navHome.href  = basePath + 'index.html';
+    if (navBlog)  navBlog.href  = basePath + 'blog.html';
+
+    const currentPage = window.location.pathname;
+    if (currentPage.includes('blog.html') || currentPage.includes('/blog/')) {
+        if (navBlog) navBlog.classList.add('active');
+        if (navHome) navHome.classList.remove('active');
+    } else {
+        if (navHome) navHome.classList.add('active');
+        if (navBlog) navBlog.classList.remove('active');
+    }
+
+    if (typeof cvData !== 'undefined' && cvData.personalInfo) {
+        const titleEl   = header.querySelector('#professional-title');
+        const aboutMeEl = header.querySelector('#about-me-text');
+        if (titleEl   && cvData.personalInfo.title)   titleEl.textContent   = cvData.personalInfo.title;
+        if (aboutMeEl && cvData.personalInfo.aboutMe) aboutMeEl.textContent = cvData.personalInfo.aboutMe;
+    }
+
+    initPhotoHandler();
+    setupThemeToggle();
 }
 
-// Load footer component
-function loadFooter() {
-    const footerPlaceholder = document.getElementById('footer-placeholder');
-    if (!footerPlaceholder) return;
-    
+// Load header and footer in parallel
+function loadComponents() {
     const basePath = getBasePath();
-    fetch(basePath + 'components/footer.html')
-        .then(response => response.text())
-        .then(html => {
-            footerPlaceholder.innerHTML = html;
-            // Set current year after footer loads
-            const yearElement = document.getElementById('current-year');
-            if (yearElement) {
-                yearElement.textContent = new Date().getFullYear();
-            }
-        })
-        .catch(error => {
-            console.error('Error loading footer:', error);
-        });
+    const headerPlaceholder = document.getElementById('header-placeholder');
+    const footerPlaceholder = document.getElementById('footer-placeholder');
+
+    const headerFetch = headerPlaceholder
+        ? fetch(basePath + 'components/header.html')
+            .then(r => r.text())
+            .then(html => {
+                headerPlaceholder.innerHTML = html;
+                initHeader(basePath);
+            })
+            .catch(err => console.error('Error loading header:', err))
+        : Promise.resolve();
+
+    const footerFetch = footerPlaceholder
+        ? fetch(basePath + 'components/footer.html')
+            .then(r => r.text())
+            .then(html => {
+                footerPlaceholder.innerHTML = html;
+                const yearEl = document.getElementById('current-year');
+                if (yearEl) yearEl.textContent = new Date().getFullYear();
+            })
+            .catch(err => console.error('Error loading footer:', err))
+        : Promise.resolve();
+
+    return Promise.all([headerFetch, footerFetch]);
 }
 
 // Handle photo placeholder (if image doesn't exist, show placeholder)
@@ -170,88 +151,46 @@ function formatDate(dateString) {
     return date.toLocaleDateString('en-US', options);
 }
 
-// Generate blog listing from data
-function generateBlogListing() {
-    const blogList = document.getElementById('blog-list');
-    if (!blogList || typeof blogArticles === 'undefined') return;
-    
-    // Clear existing content
-    blogList.innerHTML = '';
-    
-    // Check if array is empty
+// Render a list of blog articles into a container element.
+// limit: max articles to show (null = all). extraClass: added to each <article>.
+function renderArticles(containerId, { limit = null, extraClass = '' } = {}) {
+    const container = document.getElementById(containerId);
+    if (!container || typeof blogArticles === 'undefined') return;
+
     if (!blogArticles || blogArticles.length === 0) {
-        blogList.innerHTML = '<p class="blog-empty">No posts available yet. Check back soon!</p>';
+        container.innerHTML = '<p class="blog-empty">No posts available yet. Check back soon!</p>';
         return;
     }
-    
-    // Sort articles by date (newest first)
-    const sortedArticles = [...blogArticles].sort((a, b) => {
-        return new Date(b.date) - new Date(a.date);
-    });
-    
-    // Generate HTML for each article
-    sortedArticles.forEach(article => {
-        const articleHTML = `
-            <article class="blog-item ${article.hasThumbnail ? '' : 'no-image'}">
-                <a href="blog/${article.folder}/index.html" class="blog-link">
-                    <div class="blog-content">
-                        ${article.hasThumbnail ? `
-                        <div class="blog-image-container">
-                            <img src="blog/${article.folder}/thumbnail.jpg" alt="${article.title} thumbnail" class="blog-image">
-                        </div>
-                        ` : ''}
-                        <div class="blog-text">
-                            <h3 class="blog-title">${article.title}</h3>
-                            <p class="blog-excerpt">${article.excerpt}</p>
-                            <p class="blog-date">Published: ${formatDate(article.date)}</p>
-                        </div>
+
+    const sorted = [...blogArticles].sort((a, b) => new Date(b.date) - new Date(a.date));
+    const toShow = limit ? sorted.slice(0, limit) : sorted;
+
+    container.innerHTML = toShow.map(article => `
+        <article class="blog-item ${extraClass} ${article.hasThumbnail ? '' : 'no-image'}">
+            <a href="blog/${article.folder}/index.html" class="blog-link">
+                <div class="blog-content">
+                    ${article.hasThumbnail ? `
+                    <div class="blog-image-container">
+                        <img src="blog/${article.folder}/thumbnail.jpg" alt="${article.title} thumbnail" class="blog-image">
                     </div>
-                </a>
-            </article>
-        `;
-        blogList.innerHTML += articleHTML;
-    });
+                    ` : ''}
+                    <div class="blog-text">
+                        <h3 class="blog-title">${article.title}</h3>
+                        <p class="blog-excerpt">${article.excerpt}</p>
+                        <p class="blog-date">Published: ${formatDate(article.date)}</p>
+                    </div>
+                </div>
+            </a>
+        </article>
+    `).join('');
 }
 
-// Generate blog preview (first 2 articles) for homepage
+function generateBlogListing() {
+    renderArticles('blog-list');
+}
+
 function generateBlogPreview() {
-    const previewList = document.getElementById('blog-preview-list');
-    if (!previewList || typeof blogArticles === 'undefined') return;
-    
-    // Clear existing content
-    previewList.innerHTML = '';
-    
-    // Check if array is empty
-    if (!blogArticles || blogArticles.length === 0) {
-        previewList.innerHTML = '<p class="blog-empty">No posts available yet. Check back soon!</p>';
-        return;
-    }
-    
-    // Get first 2 articles
-    const previewArticles = blogArticles.slice(0, 2);
-    
-    // Generate HTML for each preview article
-    previewArticles.forEach(article => {
-        const articleHTML = `
-            <article class="blog-item blog-preview-item ${article.hasThumbnail ? '' : 'no-image'}">
-                <a href="blog/${article.folder}/index.html" class="blog-link">
-                    <div class="blog-content">
-                        ${article.hasThumbnail ? `
-                        <div class="blog-image-container">
-                            <img src="blog/${article.folder}/thumbnail.jpg" alt="${article.title} thumbnail" class="blog-image">
-                        </div>
-                        ` : ''}
-                        <div class="blog-text">
-                            <h3 class="blog-title">${article.title}</h3>
-                            <p class="blog-excerpt">${article.excerpt}</p>
-                            <p class="blog-date">Published: ${formatDate(article.date)}</p>
-                        </div>
-                    </div>
-                </a>
-            </article>
-        `;
-        previewList.innerHTML += articleHTML;
-    });
+    renderArticles('blog-preview-list', { limit: 2, extraClass: 'blog-preview-item' });
 }
 
 // Generate CV sections from data
@@ -517,8 +456,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initDarkMode();
     watchSystemTheme();
     
-    loadHeader();
-    loadFooter();
+    loadComponents();
     
     // Generate blog listing (for blog.html) or preview (for index.html)
     generateBlogListing();
