@@ -12,7 +12,14 @@
  */
 
 const blogArticles = [
-    {
+        {
+        folder: 'transformers',
+        title: 'Transformers architecture Part 1',
+        excerpt: 'Deconstructing the Transformer: A Deep Dive into Attention Mechanics',
+        date: '2025-05-10',
+        hasThumbnail: true
+    },
+{
         folder: 'self_attention_models',
         title: 'Self-Attention Models - part 1',
         excerpt: 'An intuitive introduction to self-attention models, explaining why we need self-attention and how it works.',
@@ -33,5 +40,6 @@ const blogArticles = [
         date: '2025-12-08',
         hasThumbnail: true
     }
+    
 ];
 
