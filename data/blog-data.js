@@ -16,19 +16,19 @@ const blogArticles = [
         folder: 'transformers',
         title: 'Transformers architecture Part 1',
         excerpt: 'Deconstructing the Transformer: A Deep Dive into Attention Mechanics',
-        date: '2025-05-10',
+        date: '2026-05-10',
         hasThumbnail: true
     },
 {
         folder: 'self_attention_models',
-        title: 'Self-Attention Models - part 1',
+        title: 'Self-Attention Models in RNN seq2seq models',
         excerpt: 'An intuitive introduction to self-attention models, explaining why we need self-attention and how it works.',
         date: '2025-12-17',
         hasThumbnail: true
     },
     {
         folder: 'attention_models',
-        title: 'Intuitive Introduction for Attention Models',
+        title: 'Intuitive Introduction for Attention Models in RNN seq2seq models',
         excerpt: 'An intuitive introduction to attention models in RNN seq2seq models, explaining why we need attention and how it works.',
         date: '2025-12-08',
         hasThumbnail: true
