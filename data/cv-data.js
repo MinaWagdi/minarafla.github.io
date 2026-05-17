@@ -54,7 +54,7 @@ const cvData = {
             degree: 'Masters in Data Science',
             institution: 'Polytech Nantes, Université de Nantes, Nantes, France',
             period: '2019 - 2020',
-            // thesisLink: 'https://...',
+            thesisLink: 'documents/master-thesis.pdf',
             // description: 'Additional details or achievements.'
         },
         {
