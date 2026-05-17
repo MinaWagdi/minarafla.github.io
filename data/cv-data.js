@@ -47,12 +47,14 @@ const cvData = {
             degree: 'PhD in Computer Science',
             institution: 'Université de Caen Normandie, Caen, France',
             period: '2020 - 2023',
+            thesisLink: 'https://theses.hal.science/tel-04465338/document',
             // description: 'Additional details, GPA, honors, or relevant coursework.'
         },
         {
             degree: 'Masters in Data Science',
             institution: 'Polytech Nantes, Université de Nantes, Nantes, France',
             period: '2019 - 2020',
+            // thesisLink: 'https://...',
             // description: 'Additional details or achievements.'
         },
         {
@@ -145,7 +147,7 @@ const cvData = {
             title: 'KUPLIFT Library',
             organization: 'Open Source Project',
             year: '2023',
-            description: 'Created a Python library for parameter-free machine learning algorithms for uplift estimation. Available on GitHub and PyPI.',
+            description: 'During my thesis, I started Kuplift a Python library for parameter-free machine learning algorithms for uplift estimation. Available on GitHub and PyPI.',
             icon: '📦',
             link: 'https://github.com/UData-Orange/kuplift'
         },

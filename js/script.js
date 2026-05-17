@@ -240,6 +240,9 @@ function generateEducation() {
     container.innerHTML = '';
     cvData.education.forEach(edu => {
         const descriptionHTML = edu.description ? `<p class="item-description">${edu.description}</p>` : '';
+        const thesisHTML = edu.thesisLink
+            ? `<div class="education-links"><a href="${edu.thesisLink}" target="_blank" rel="noopener noreferrer" class="link-button">📄 Thesis</a></div>`
+            : '';
         const eduHTML = `
             <article class="timeline-item">
                 <div class="timeline-marker"></div>
@@ -248,6 +251,7 @@ function generateEducation() {
                     <p class="item-organization">${edu.institution}</p>
                     <p class="item-period">${edu.period}</p>
                     ${descriptionHTML}
+                    ${thesisHTML}
                 </div>
             </article>
         `;

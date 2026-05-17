@@ -619,10 +619,12 @@ ul {
     margin-bottom: var(--spacing-sm);
 }
 
-.publication-links {
+.publication-links,
+.education-links {
     display: flex;
     gap: var(--spacing-sm);
     flex-wrap: wrap;
+    margin-top: var(--spacing-xs);
 }
 
 .link-button {
