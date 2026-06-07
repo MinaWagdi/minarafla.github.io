@@ -125,22 +125,6 @@ const cvData = {
         }
     ],
 
-    // Skills (organized by category)
-    skills: [
-        {
-            category: 'Programming Languages',
-            items: ['Python', 'JavaScript', 'Java', 'C++']
-        },
-        {
-            category: 'Frameworks & Tools',
-            items: ['React', 'Node.js', 'Docker', 'Git']
-        },
-        {
-            category: 'Languages',
-            items: ['English (Fluent)', 'French (Native)', 'Arabic (Native)']
-        }
-    ],
-
     // Highlights
     highlights: [
         {

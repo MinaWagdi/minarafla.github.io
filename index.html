@@ -6,6 +6,11 @@
     <meta name="description" content="Mina Rafla - Personal Website and CV">
     <title>Mina Rafla - Homepage</title>
     <link rel="stylesheet" href="styles.css">
+
+    <!-- KaTeX for math rendering in TIL previews -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 </head>
 <body>
     <a href="#main-content" class="skip-link">Skip to content</a>
@@ -16,6 +21,7 @@
     <aside class="cv-sidebar" id="cv-sidebar">
         <nav class="cv-nav" id="cv-nav">
             <a href="#recent-posts" class="cv-nav-link">Posts</a>
+            <a href="#latest-tils" class="cv-nav-link">TILs</a>
             <a href="#work-experience" class="cv-nav-link">Experience</a>
             <a href="#education" class="cv-nav-link">Education</a>
             <a href="#highlights" class="cv-nav-link">Highlights</a>
@@ -46,6 +52,17 @@
                 </div>
                 <div class="blog-preview-footer">
                     <a href="blog.html" class="blog-view-all-link">View all posts →</a>
+                </div>
+            </section>
+
+            <!-- Latest TILs Preview Section -->
+            <section class="section" id="latest-tils">
+                <h2 class="section-title">Latest TILs</h2>
+                <div class="blog-preview-list" id="tils-preview-list">
+                    <!-- Generated automatically -->
+                </div>
+                <div class="blog-preview-footer">
+                    <a href="tils.html" class="blog-view-all-link">View all TILs →</a>
                 </div>
             </section>
 
@@ -92,6 +109,24 @@
 
     <script src="data/cv-data.js"></script>
     <script src="data/blog-data.js"></script>
+    <script src="data/tils-data.js"></script>
     <script src="js/script.js"></script>
+
+    <!-- Render math in TIL previews (runs after script.js injects them) -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (typeof renderMathInElement !== 'undefined') {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false},
+                        {left: '\\[', right: '\\]', display: true},
+                        {left: '\\(', right: '\\)', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        });
+    </script>
 </body>
 </html>

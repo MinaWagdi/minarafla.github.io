@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Mina Rafla - TILs (Today I Learned)">
+    <title>TILs - Mina Rafla</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- KaTeX for math rendering in TIL content -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
+    <!-- Header loaded dynamically -->
+    <div id="header-placeholder"></div>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content">
+        <div class="container">
+            <section class="section">
+                <h2 class="section-title">TILs — Today I Learned</h2>
+                <p class="blog-intro">Small notes on things I'm learning, day by day.</p>
+
+                <!-- TIL List - Generated automatically from tils-data.js -->
+                <div class="blog-list" id="til-list">
+                    <!-- TILs will be inserted here by JavaScript -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer loaded dynamically -->
+    <div id="footer-placeholder"></div>
+
+    <script src="data/cv-data.js"></script>
+    <script src="data/tils-data.js"></script>
+    <script src="js/script.js"></script>
+
+    <!-- Render math in TIL content (runs after script.js injects the feed) -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (typeof renderMathInElement !== 'undefined') {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false},
+                        {left: '\\[', right: '\\]', display: true},
+                        {left: '\\(', right: '\\)', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        });
+    </script>
+</body>
+</html>

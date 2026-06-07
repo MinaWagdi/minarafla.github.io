@@ -50,19 +50,26 @@ function watchSystemTheme() {
     });
 }
 
-// Configuration: Determine base path based on current page location
-function getBasePath() {
+// True when the current page is a blog article folder (blog/<name>/index.html)
+function isArticlePage() {
     const path = window.location.pathname;
-    // If we're in a blog article folder (e.g., /blog/article-1/)
-    if (path.includes('/blog/') && path.split('/').length > 3) {
-        return '../../';
-    }
-    // If we're in blog.html
-    if (path.includes('blog.html')) {
-        return './';
-    }
-    // Default (index.html or root)
-    return './';
+    return path.includes('/blog/') && path.split('/').length > 3;
+}
+
+// True for the blog listing page or any blog article
+function isBlogPage() {
+    const path = window.location.pathname;
+    return path.includes('blog.html') || path.includes('/blog/');
+}
+
+// True for the TILs page
+function isTilPage() {
+    return window.location.pathname.includes('tils.html');
+}
+
+// Determine base path: article pages are two levels deep, everything else is at root
+function getBasePath() {
+    return isArticlePage() ? '../../' : './';
 }
 
 // Post-process header HTML once inserted into the DOM
@@ -78,20 +85,19 @@ function initHeader(basePath) {
     const nameLink = header.querySelector('#header-name-link');
     const navHome  = header.querySelector('#nav-home');
     const navBlog  = header.querySelector('#nav-blog');
+    const navTils  = header.querySelector('#nav-tils');
 
     if (homeLink) homeLink.href = basePath + 'index.html';
     if (nameLink) nameLink.href = basePath + 'index.html';
     if (navHome)  navHome.href  = basePath + 'index.html';
     if (navBlog)  navBlog.href  = basePath + 'blog.html';
+    if (navTils)  navTils.href  = basePath + 'tils.html';
 
-    const currentPage = window.location.pathname;
-    if (currentPage.includes('blog.html') || currentPage.includes('/blog/')) {
-        if (navBlog) navBlog.classList.add('active');
-        if (navHome) navHome.classList.remove('active');
-    } else {
-        if (navHome) navHome.classList.add('active');
-        if (navBlog) navBlog.classList.remove('active');
-    }
+    // Highlight the nav tab for the current section (home is the default)
+    const activeNav = isTilPage() ? navTils : isBlogPage() ? navBlog : navHome;
+    [navHome, navBlog, navTils].forEach(link => {
+        if (link) link.classList.toggle('active', link === activeNav);
+    });
 
     if (typeof cvData !== 'undefined' && cvData.personalInfo) {
         const titleEl   = header.querySelector('#professional-title');
@@ -151,184 +157,205 @@ function formatDate(dateString) {
     return date.toLocaleDateString('en-US', options);
 }
 
-// Render a list of blog articles into a container element.
-// limit: max articles to show (null = all). extraClass: added to each <article>.
-function renderArticles(containerId, { limit = null, extraClass = '' } = {}) {
+// Render a data array into a container using a per-item template function.
+// No-op if the container is missing or the list is empty.
+function renderList(containerId, items, templateFn) {
     const container = document.getElementById(containerId);
-    if (!container || typeof blogArticles === 'undefined') return;
+    if (!container || !items || !items.length) return;
+    container.innerHTML = items.map(templateFn).join('');
+}
 
-    if (!blogArticles || blogArticles.length === 0) {
+// Render a list of posts (blog articles or TILs) into a container element.
+// posts: data array. folder: parent dir ('blog' or 'tils') used to build links.
+// limit: max posts to show (null = all). extraClass: added to each <article>.
+// groupByYear: if true, posts are grouped under a year heading.
+function renderPosts(containerId, posts, { folder, limit = null, extraClass = '', groupByYear = false } = {}) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    if (!posts || posts.length === 0) {
         container.innerHTML = '<p class="blog-empty">No posts available yet. Check back soon!</p>';
         return;
     }
 
-    const sorted = [...blogArticles].sort((a, b) => new Date(b.date) - new Date(a.date));
+    const sorted = [...posts].sort((a, b) => new Date(b.date) - new Date(a.date));
     const toShow = limit ? sorted.slice(0, limit) : sorted;
 
-    container.innerHTML = toShow.map(article => `
-        <article class="blog-item ${extraClass} ${article.hasThumbnail ? '' : 'no-image'}">
-            <a href="blog/${article.folder}/index.html" class="blog-link">
+    const renderPost = post => `
+        <article class="blog-item ${extraClass} ${post.hasThumbnail ? '' : 'no-image'}">
+            <a href="${folder}/${post.folder}/index.html" class="blog-link">
                 <div class="blog-content">
-                    ${article.hasThumbnail ? `
+                    ${post.hasThumbnail ? `
                     <div class="blog-image-container">
-                        <img src="blog/${article.folder}/thumbnail.jpg" alt="${article.title} thumbnail" class="blog-image">
+                        <img src="${folder}/${post.folder}/thumbnail.jpg" alt="${post.title} thumbnail" class="blog-image">
                     </div>
                     ` : ''}
                     <div class="blog-text">
-                        <h3 class="blog-title">${article.title}</h3>
-                        <p class="blog-excerpt">${article.excerpt}</p>
-                        <p class="blog-date">Published: ${formatDate(article.date)}</p>
+                        <h3 class="blog-title">${post.title}</h3>
+                        <p class="blog-excerpt">${post.excerpt}</p>
+                        <p class="blog-date">Published: ${formatDate(post.date)}</p>
                     </div>
                 </div>
             </a>
         </article>
-    `).join('');
+    `;
+
+    if (!groupByYear) {
+        container.innerHTML = toShow.map(renderPost).join('');
+        return;
+    }
+
+    const grouped = toShow.reduce((groups, post) => {
+        const year = new Date(post.date).getFullYear();
+        if (!groups[year]) groups[year] = [];
+        groups[year].push(post);
+        return groups;
+    }, {});
+
+    container.innerHTML = Object.keys(grouped)
+        .sort((a, b) => Number(b) - Number(a))
+        .map(year => `
+            <section class="blog-year-group">
+                <h3 class="blog-year-heading">${year}</h3>
+                ${grouped[year].map(renderPost).join('')}
+            </section>
+        `)
+        .join('');
 }
 
 function generateBlogListing() {
-    renderArticles('blog-list');
+    if (typeof blogArticles === 'undefined') return;
+    renderPosts('blog-list', blogArticles, { folder: 'blog', groupByYear: true });
 }
 
 function generateBlogPreview() {
-    renderArticles('blog-preview-list', { limit: 2, extraClass: 'blog-preview-item' });
+    if (typeof blogArticles === 'undefined') return;
+    renderPosts('blog-preview-list', blogArticles, { folder: 'blog', limit: 2, extraClass: 'blog-preview-item' });
 }
 
-// Generate CV sections from data
+// Anchor id for a TIL (so the homepage can deep-link into the tils.html feed)
+function tilAnchorId(til) {
+    const slug = (til.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    return `til-${til.date}-${slug}`;
+}
+
+// Render TILs inline (full content, newest first) into a container.
+// limit: max to show (null = all). linkTitle: link each title to its anchor on tils.html.
+function renderTils(containerId, { limit = null, linkTitle = false } = {}) {
+    const container = document.getElementById(containerId);
+    if (!container || typeof tilPosts === 'undefined') return;
+
+    if (!tilPosts.length) {
+        container.innerHTML = '<p class="blog-empty">No TILs yet. Check back soon!</p>';
+        return;
+    }
+
+    const sorted = [...tilPosts].sort((a, b) => new Date(b.date) - new Date(a.date));
+    const toShow = limit ? sorted.slice(0, limit) : sorted;
+
+    container.innerHTML = toShow.map(til => {
+        const anchor = tilAnchorId(til);
+        const heading = linkTitle
+            ? `<a href="tils.html#${anchor}" class="til-title-link">${til.title}</a>`
+            : til.title;
+        const image = til.image
+            ? `<div class="til-image-container"><img src="${til.image}" alt="${til.title}" class="til-image"></div>`
+            : '';
+        return `
+            <article class="til-item" id="${anchor}">
+                <h3 class="til-title">${heading}</h3>
+                <p class="til-date">${formatDate(til.date)}</p>
+                ${image}
+                <div class="article-content">${til.content}</div>
+            </article>
+        `;
+    }).join('');
+}
+
+function generateTilListing() {
+    renderTils('til-list', {});
+}
+
+function generateTilPreview() {
+    renderTils('tils-preview-list', { limit: 3, linkTitle: true });
+}
+
+// Generate all CV sections from cvData (each section is data → template → container)
 function generateCVSections() {
     if (typeof cvData === 'undefined') return;
-    
-    generateWorkExperience();
-    generateEducation();
-    generatePublications();
-    generateSkills();
-    generateHighlights();
+
+    renderList('work-experience-list', cvData.workExperience, workItemTemplate);
+    renderList('education-list', cvData.education, educationItemTemplate);
+    renderList('publications-list', cvData.publications, publicationItemTemplate);
+    renderList('highlights-list', cvData.highlights, highlightItemTemplate);
 }
 
-// Generate Work Experience section
-function generateWorkExperience() {
-    const container = document.getElementById('work-experience-list');
-    if (!container || !cvData.workExperience) return;
-    
-    container.innerHTML = '';
-    cvData.workExperience.forEach(job => {
-        // Only show description if it exists and has items
-        const hasDescription = job.description && job.description.length > 0;
-        const descriptionHTML = hasDescription 
-            ? `<ul class="item-description">${job.description.map(item => `<li>${item}</li>`).join('')}</ul>`
-            : '';
-        
-        const jobHTML = `
-            <article class="timeline-item">
-                <div class="timeline-marker"></div>
-                <div class="timeline-content">
-                    <h3 class="item-title">${job.title}</h3>
-                    <p class="item-organization">${job.organization}</p>
-                    <p class="item-period">${job.period}</p>
-                    ${descriptionHTML}
-                </div>
-            </article>
-        `;
-        container.innerHTML += jobHTML;
-    });
-}
-
-// Generate Education section
-function generateEducation() {
-    const container = document.getElementById('education-list');
-    if (!container || !cvData.education) return;
-    
-    container.innerHTML = '';
-    cvData.education.forEach(edu => {
-        const descriptionHTML = edu.description ? `<p class="item-description">${edu.description}</p>` : '';
-        const thesisHTML = edu.thesisLink
-            ? `<div class="education-links"><a href="${edu.thesisLink}" target="_blank" rel="noopener noreferrer" class="link-button">📄 Thesis</a></div>`
-            : '';
-        const eduHTML = `
-            <article class="timeline-item">
-                <div class="timeline-marker"></div>
-                <div class="timeline-content">
-                    <h3 class="item-title">${edu.degree}</h3>
-                    <p class="item-organization">${edu.institution}</p>
-                    <p class="item-period">${edu.period}</p>
-                    ${descriptionHTML}
-                    ${thesisHTML}
-                </div>
-            </article>
-        `;
-        container.innerHTML += eduHTML;
-    });
-}
-
-// Generate Publications section
-function generatePublications() {
-    const container = document.getElementById('publications-list');
-    if (!container || !cvData.publications) return;
-    
-    container.innerHTML = '';
-    cvData.publications.forEach(pub => {
-        const linksHTML = pub.links.map(link => 
-            `<a href="${link.url}" target="_blank" rel="noopener noreferrer" class="link-button">${link.label}</a>`
-        ).join('');
-        
-        const pubHTML = `
-            <article class="publication-item">
-                <h3 class="publication-title">${pub.title}</h3>
-                <p class="publication-authors">${pub.authors}</p>
-                <p class="publication-venue">${pub.venue}</p>
-                <div class="publication-links">${linksHTML}</div>
-            </article>
-        `;
-        container.innerHTML += pubHTML;
-    });
-}
-
-// Generate Skills section
-function generateSkills() {
-    const container = document.getElementById('skills-list');
-    if (!container || !cvData.skills) return;
-    
-    container.innerHTML = '';
-    cvData.skills.forEach(category => {
-        const tagsHTML = category.items.map(item => 
-            `<span class="skill-tag">${item}</span>`
-        ).join('');
-        
-        const categoryHTML = `
-            <div class="skill-category">
-                <h3 class="skill-category-title">${category.category}</h3>
-                <div class="skill-tags">${tagsHTML}</div>
+function workItemTemplate(job) {
+    const description = job.description && job.description.length
+        ? `<ul class="item-description">${job.description.map(item => `<li>${item}</li>`).join('')}</ul>`
+        : '';
+    return `
+        <article class="timeline-item">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content">
+                <h3 class="item-title">${job.title}</h3>
+                <p class="item-organization">${job.organization}</p>
+                <p class="item-period">${job.period}</p>
+                ${description}
             </div>
-        `;
-        container.innerHTML += categoryHTML;
-    });
+        </article>
+    `;
 }
 
-// Generate Highlights section
-function generateHighlights() {
-    const container = document.getElementById('highlights-list');
-    if (!container || !cvData.highlights) return;
-    
-    container.innerHTML = '';
-    cvData.highlights.forEach(highlight => {
-        const linkHTML = highlight.link ? 
-            `<div class="achievement-links">
-                <a href="${highlight.link}" target="_blank" rel="noopener noreferrer" class="link-button">View</a>
-            </div>` : '';
-        
-        const highlightHTML = `
-            <article class="award-item">
-                <div class="award-icon">${highlight.icon || '🏆'}</div>
-                <div class="award-content">
-                    <h3 class="award-title">${highlight.title}</h3>
-                    <p class="award-organization">${highlight.organization}</p>
-                    <p class="award-year">${highlight.year}</p>
-                    <p class="award-description">${highlight.description}</p>
-                    ${linkHTML}
-                </div>
-            </article>
-        `;
-        container.innerHTML += highlightHTML;
-    });
+function educationItemTemplate(edu) {
+    const description = edu.description ? `<p class="item-description">${edu.description}</p>` : '';
+    const thesis = edu.thesisLink
+        ? `<div class="education-links"><a href="${edu.thesisLink}" target="_blank" rel="noopener noreferrer" class="link-button">📄 Thesis</a></div>`
+        : '';
+    return `
+        <article class="timeline-item">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content">
+                <h3 class="item-title">${edu.degree}</h3>
+                <p class="item-organization">${edu.institution}</p>
+                <p class="item-period">${edu.period}</p>
+                ${description}
+                ${thesis}
+            </div>
+        </article>
+    `;
+}
+
+function publicationItemTemplate(pub) {
+    const links = pub.links.map(link =>
+        `<a href="${link.url}" target="_blank" rel="noopener noreferrer" class="link-button">${link.label}</a>`
+    ).join('');
+    return `
+        <article class="publication-item">
+            <h3 class="publication-title">${pub.title}</h3>
+            <p class="publication-authors">${pub.authors}</p>
+            <p class="publication-venue">${pub.venue}</p>
+            <div class="publication-links">${links}</div>
+        </article>
+    `;
+}
+
+function highlightItemTemplate(highlight) {
+    const link = highlight.link
+        ? `<div class="achievement-links"><a href="${highlight.link}" target="_blank" rel="noopener noreferrer" class="link-button">View</a></div>`
+        : '';
+    return `
+        <article class="award-item">
+            <div class="award-icon">${highlight.icon || '🏆'}</div>
+            <div class="award-content">
+                <h3 class="award-title">${highlight.title}</h3>
+                <p class="award-organization">${highlight.organization}</p>
+                <p class="award-year">${highlight.year}</p>
+                <p class="award-description">${highlight.description}</p>
+                ${link}
+            </div>
+        </article>
+    `;
 }
 
 // Setup CV navigation smooth scrolling and active state
@@ -340,15 +367,15 @@ function setupCVNavigation() {
     if (!cvSidebar || !cvNav) return;
     
     // Hide sidebar on blog pages
-    const currentPage = window.location.pathname;
-    if (currentPage.includes('blog.html') || currentPage.includes('/blog/')) {
+    if (isBlogPage()) {
         cvSidebar.style.display = 'none';
         document.querySelector('.main-content-with-sidebar')?.classList.remove('main-content-with-sidebar');
         return;
     }
     
     const navLinks = cvNav.querySelectorAll('.cv-nav-link');
-    const sections = ['recent-posts', 'work-experience', 'education', 'highlights', 'publications'];
+    // Order must match the order of the '#'-anchor links in the sidebar
+    const sections = ['recent-posts', 'latest-tils', 'work-experience', 'education', 'highlights', 'publications'];
     
     // Handle click events for smooth scrolling (only for section anchors)
     navLinks.forEach(link => {
@@ -459,26 +486,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize dark mode first (before loading components)
     initDarkMode();
     watchSystemTheme();
-    
+
     loadComponents();
-    
-    // Generate blog listing (for blog.html) or preview (for index.html)
+
+    // Generate blog + TIL listings (on their pages) and homepage previews
     generateBlogListing();
     generateBlogPreview();
-    
+    generateTilListing();
+    generateTilPreview();
+
+    // CV sections are static placeholders in index.html, so they (and the
+    // navigation that measures them) are ready synchronously after generation.
     generateCVSections();
-    
-    // Setup CV navigation after a short delay to ensure DOM is ready
-    setTimeout(() => {
-        setupCVNavigation();
-    }, 200);
-    
-    // Fallback: Set year if footer wasn't loaded dynamically
-    setTimeout(() => {
-        const yearElement = document.getElementById('current-year');
-        if (yearElement && !yearElement.textContent) {
-            yearElement.textContent = new Date().getFullYear();
-        }
-    }, 100);
+    setupCVNavigation();
 });
 

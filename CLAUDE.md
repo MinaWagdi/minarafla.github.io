@@ -30,8 +30,9 @@ git add . && git commit -m "message" && git push
 
 All editable content lives in two data files — no HTML editing needed for content updates:
 
-- **[data/cv-data.js](data/cv-data.js)** — `personalInfo`, `workExperience`, `education`, `publications`, `skills`, `highlights` arrays. Rendered by `script.js` into `index.html` placeholders.
+- **[data/cv-data.js](data/cv-data.js)** — `personalInfo`, `workExperience`, `education`, `publications`, `highlights` arrays. Rendered by `script.js` into `index.html` placeholders.
 - **[data/blog-data.js](data/blog-data.js)** — `blogArticles` array. Each entry has `folder`, `title`, `excerpt`, `date` (YYYY-MM-DD), `hasThumbnail`. Rendered into `blog.html` and the homepage preview.
+- **[data/tils-data.js](data/tils-data.js)** — `tilPosts` array of short "Today I Learned" posts. Each entry is inline (`date`, `title`, HTML `content`, optional `image`) — TILs have no page each. Rendered onto `tils.html` and previewed (latest 3) on the homepage. See [markdown/TILS_GUIDE.md](markdown/TILS_GUIDE.md).
 
 ### Reusable Components
 
