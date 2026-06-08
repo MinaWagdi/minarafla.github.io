@@ -239,9 +239,10 @@ function tilAnchorId(til) {
     return `til-${til.date}-${slug}`;
 }
 
-// Render TILs inline (full content, newest first) into a container.
-// limit: max to show (null = all). linkTitle: link each title to its anchor on tils.html.
-function renderTils(containerId, { limit = null, linkTitle = false } = {}) {
+// Render TILs (newest first) into a container.
+// limit:   max to show (null = all).
+// compact: render one-line title + date links (homepage) instead of full content.
+function renderTils(containerId, { limit = null, compact = false } = {}) {
     const container = document.getElementById(containerId);
     if (!container || typeof tilPosts === 'undefined') return;
 
@@ -255,15 +256,22 @@ function renderTils(containerId, { limit = null, linkTitle = false } = {}) {
 
     container.innerHTML = toShow.map(til => {
         const anchor = tilAnchorId(til);
-        const heading = linkTitle
-            ? `<a href="tils.html#${anchor}" class="til-title-link">${til.title}</a>`
-            : til.title;
+
+        if (compact) {
+            return `
+                <a href="tils.html#${anchor}" class="til-compact-item">
+                    <span class="til-compact-title">${til.title}</span>
+                    <span class="til-compact-date">${formatDate(til.date)}</span>
+                </a>
+            `;
+        }
+
         const image = til.image
             ? `<div class="til-image-container"><img src="${til.image}" alt="${til.title}" class="til-image"></div>`
             : '';
         return `
             <article class="til-item" id="${anchor}">
-                <h3 class="til-title">${heading}</h3>
+                <h3 class="til-title">${til.title}</h3>
                 <p class="til-date">${formatDate(til.date)}</p>
                 ${image}
                 <div class="article-content">${til.content}</div>
@@ -277,7 +285,7 @@ function generateTilListing() {
 }
 
 function generateTilPreview() {
-    renderTils('tils-preview-list', { limit: 3, linkTitle: true });
+    renderTils('tils-preview-list', { limit: 3, compact: true });
 }
 
 // Generate all CV sections from cvData (each section is data → template → container)

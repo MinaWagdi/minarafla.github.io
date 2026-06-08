@@ -12,7 +12,14 @@
  */
 
 const blogArticles = [
-        {
+            {
+        folder: 'transformers_pt2',
+        title: "Transformers architecture Part 2: inside the encoder",
+        excerpt: "Part 2: inside the encoder \u2014 embeddings, multi-head attention, feed-forward, and normalization.",
+        date: '2026-06-08',
+        hasThumbnail: true
+    },
+{
         folder: 'transformers',
         title: 'Transformers architecture Part 1',
         excerpt: 'Deconstructing the Transformer: A Deep Dive into Attention Mechanics',
