@@ -32,7 +32,7 @@ The number of parameters in a Masked Self-Attention layer is exactly the same as
 Remember of a previous post, a self attention looks like this:
 ![Self attention](self_attention.png)
 
-where $W_i^Q$,$W_i^K$,$W_i^V$, are the weight matrix that transforms the input X to query, key and value. Where $X$ has the dim of $n_max$ x $d_{model}$ and W_i has the dim of $d_{model}$ x $d_k$ assuming $d_k = d_q = d_v$.
+where $W_i^Q$,$W_i^K$,$W_i^V$, are the weight matrix that transforms the input X to query, key and value. Where $X$ has the dim of $n_{max}$ x $d_{model}$ and W_i has the dim of $d_{model}$ x $d_k$ assuming $d_k = d_q = d_v$.
 
 ## 2. Cross-Attention
 Next up is the Cross-Attention layer.
