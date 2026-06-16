@@ -12,7 +12,14 @@
  */
 
 const blogArticles = [
-                {
+                    {
+        folder: 'leiden',
+        title: "The Leiden Clustering Algorithm",
+        excerpt: "The Leiden clustering algorithm for community detection in a graph.",
+        date: '2026-06-17',
+        hasThumbnail: true
+    },
+{
         folder: 'transformers_pt3',
         title: "Transformer architecture Part 3: inside the Decoder",
         excerpt: "Transformers architecture - pt3 inside the decoder",
