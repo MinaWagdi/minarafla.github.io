@@ -14,6 +14,16 @@ Introduced by Traag et al. from Leiden University in the Netherlands (which give
 
 At its core, community detection is an optimization problem. The goal is to optimize a score function, typically **Modularity** or the **Constant Potts Model (CPM)**. Modularity tries to maximize the difference between the actual number of edges inside a community and the expected number of such edges. By adjusting a **resolution parameter**, we can control the granularity of the clustering (i.e., whether the algorithm finds more, smaller communities or fewer, larger ones).
 
+The Modularity score function $H$ can be defined as:
+$$H = \frac{1}{2m} \sum_c \left( e_c - \gamma \frac{K_c^2}{2m} \right)$$
+
+* $e_c$: Actual number of edges in community $c$
+* $K_c$: Sum of degrees of all nodes in community $c$
+* $2m$: Total number of edges in the network
+* $\gamma$: Resolution parameter
+
+Optimizing $H$ is an NP-Hard problem. For a long time, the most popular algorithm to optimize this was my predecessor, the **Louvain algorithm**.
+
 Because optimizing the modularity score is an NP-Hard problem, heuristic algorithms are required. For a long time, the most popular algorithm for this was the Louvain algorithm.
 
 ---
@@ -45,8 +55,8 @@ This phase works similarly to the Louvain algorithm. It moves nodes to neighbori
 This is the step that makes Leiden distinct. Instead of immediately aggregating the communities found in Phase 1, Leiden refines them.
 * Within each community detected in Phase 1, the algorithm detects a new partition (a new division of the nodes) by dividing the community back into **singleton communities** (each node on its own).
 * It performs a local moving phase similar to Phase 1, but strictly isolated to the scope of each community, and with the following constraints:
-    - **The Border Constraint:** The algorithm evaluates a node's local structure. If a selected node is well connected to a neighboring node *within that exact same border* (the boundary of the community detected in Phase 1), it merges them. Any node outside this community boundary is ignored.
-    - **Randomness & Positive Impact:** Unlike Phase 1 (which greedily looks for the merge with the *maximum* positive impact on the score), Phase 2 looks for *any* positive increase. If a node has three valid neighbors that would result in score increases of +2, +5, and +1, pure logic would dictate picking +5. However, Leiden randomly picks a node from these three options (likely weighted by the score). This means the +2 merge still has a chance to be picked.
+  * **The Border Constraint:** The algorithm evaluates a node's local structure. If a selected node is well connected to a neighboring node *within that exact same border* (the boundary of the community detected in Phase 1), it merges them. Any node outside this community boundary is ignored.
+  * **Randomness & Positive Impact:** Unlike Phase 1 (which greedily looks for the merge with the *maximum* positive impact on the score), Phase 2 looks for *any* positive increase. If a node has three valid neighbors that would result in score increases of +2, +5, and +1, pure logic would dictate picking +5. However, Leiden randomly picks a node from these three options (likely weighted by the score). This means the +2 merge still has a chance to be picked.
 * Randomly evaluating and merging nodes that yield any positive impact prevents the algorithm from getting stuck in a **"local maximum."**
 
 ### Phase 3: Aggregation
