@@ -1,4 +1,4 @@
-# Self-Attention Models: An Intuitive Introduction
+# Understanding the Self-Attention Models: An Intuitive Introduction
 
 Hi there, in this post, I present my notes on self-attention models, building upon the attention mechanism discussed in my previous article. This content is based on Shusen Wang's explanations of self-attention with RNNs, combined with insights from other resources. For more details on the basic attention mechanism, see my [introduction article to attention models](../attention_models/).
 

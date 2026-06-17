@@ -191,12 +191,50 @@ def build_index_html(template_path, title, iso_date, html_content, excerpt="", f
 # blog-data.js update
 # ---------------------------------------------------------------------------
 
+def update_existing_entry(content, folder, title, excerpt):
+    """Rewrite the title (and excerpt, if provided) of an already-registered
+    entry. Locates the object literal containing this folder and replaces its
+    `title:`/`excerpt:` fields. Returns the (possibly unchanged) content."""
+    # Find the `folder: '<folder>'` declaration, then the enclosing { ... }.
+    m = re.search(rf"folder:\s*['\"]{re.escape(folder)}['\"]", content)
+    if not m:
+        return content
+    obj_start = content.rfind("{", 0, m.start())
+    obj_end = content.find("}", m.end())
+    if obj_start == -1 or obj_end == -1:
+        return content
+
+    block = content[obj_start:obj_end]
+
+    new_block = re.sub(
+        r"title:\s*(?:\"(?:[^\"\\]|\\.)*\"|'(?:[^'\\]|\\.)*')",
+        f"title: {json.dumps(title)}",
+        block,
+        count=1,
+    )
+    if excerpt:
+        new_block = re.sub(
+            r"excerpt:\s*(?:\"(?:[^\"\\]|\\.)*\"|'(?:[^'\\]|\\.)*')",
+            f"excerpt: {json.dumps(excerpt)}",
+            new_block,
+            count=1,
+        )
+
+    return content[:obj_start] + new_block + content[obj_end:]
+
+
 def update_blog_data(blog_data_path, folder, title, excerpt, iso_date, has_thumbnail):
     content = Path(blog_data_path).read_text(encoding="utf-8")
 
-    # Skip if this folder is already registered
+    # If this folder is already registered, update its existing entry in place
+    # so the Markdown heading stays the single source of truth on re-publish.
     if f"folder: '{folder}'" in content or f'folder: "{folder}"' in content:
-        print(f"  blog-data.js: entry for '{folder}' already exists, skipping.")
+        updated = update_existing_entry(content, folder, title, excerpt)
+        if updated != content:
+            Path(blog_data_path).write_text(updated, encoding="utf-8")
+            print(f"  blog-data.js: updated entry for '{folder}'")
+        else:
+            print(f"  blog-data.js: entry for '{folder}' already up to date.")
         return
 
     entry = (
@@ -227,10 +265,12 @@ def update_blog_data(blog_data_path, folder, title, excerpt, iso_date, has_thumb
 # Git helpers
 # ---------------------------------------------------------------------------
 
-def git_push(repo_root, article_dir, title):
+def git_push(repo_root, article_dirs, commit_message):
+    add_cmd = ["git", "-C", repo_root, "add", "data/blog-data.js"]
+    add_cmd.extend(str(d) for d in article_dirs)
     cmds = [
-        ["git", "-C", repo_root, "add", str(article_dir), "data/blog-data.js"],
-        ["git", "-C", repo_root, "commit", "-m", f"Add blog article: {title}"],
+        add_cmd,
+        ["git", "-C", repo_root, "commit", "-m", commit_message],
         ["git", "-C", repo_root, "push"],
     ]
     for cmd in cmds:
@@ -247,22 +287,11 @@ def git_push(repo_root, article_dir, title):
 # Main
 # ---------------------------------------------------------------------------
 
-def main():
-    parser = argparse.ArgumentParser(description="Publish a blog article from Markdown")
-    parser.add_argument("md_file", help="Path to the Markdown file, e.g. blog/my-article/article.md")
-    parser.add_argument("--title",     help="Article title")
-    parser.add_argument("--date",      help="Publication date (YYYY-MM-DD), default: today")
-    parser.add_argument("--excerpt",   default="", help="Short excerpt for blog listing")
-    parser.add_argument("--thumbnail", action="store_true", help="Set hasThumbnail: true")
-    parser.add_argument("--push",      action="store_true", help="Git add, commit, and push")
-    args = parser.parse_args()
-
-    md_path = Path(args.md_file)
+def publish_article(md_path, args, repo_root, template_file, blog_data_file):
+    """Publish a single Markdown article: build its index.html and register it
+    in blog-data.js. Returns (article_dir, title)."""
     if not md_path.exists():
         sys.exit(f"Error: file not found: {md_path}")
-
-    # Resolve repo root (script lives in scripts/, so two levels up from here)
-    repo_root = Path(__file__).parent.parent
 
     # --- Parse markdown ---
     raw = md_path.read_text(encoding="utf-8")
@@ -283,12 +312,6 @@ def main():
     article_dir = md_path.parent
     folder = article_dir.name
     output_file = article_dir / "index.html"
-    template_file = repo_root / "blog" / "article-template.html"
-    blog_data_file = repo_root / "data" / "blog-data.js"
-
-    for f in [template_file, blog_data_file]:
-        if not f.exists():
-            sys.exit(f"Error: required file not found: {f}")
 
     if has_thumbnail:
         has_thumb_file = any(
@@ -314,15 +337,57 @@ def main():
     # 3. Update blog-data.js
     update_blog_data(blog_data_file, folder, title, excerpt, iso_date, has_thumbnail)
 
-    # 4. Optionally push
+    return article_dir, title
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Publish one or more blog articles from Markdown")
+    parser.add_argument("md_file", nargs="+", help="Path(s) to Markdown file(s), e.g. blog/my-article/article.md")
+    parser.add_argument("--title",     help="Article title (single article only)")
+    parser.add_argument("--date",      help="Publication date (YYYY-MM-DD), default: today")
+    parser.add_argument("--excerpt",   default="", help="Short excerpt for blog listing (single article only)")
+    parser.add_argument("--thumbnail", action="store_true", help="Set hasThumbnail: true")
+    parser.add_argument("--push",      action="store_true", help="Git add, commit, and push")
+    args = parser.parse_args()
+
+    md_paths = [Path(p) for p in args.md_file]
+
+    # Per-article text overrides are ambiguous across multiple files.
+    if len(md_paths) > 1 and (args.title or args.excerpt):
+        sys.exit("Error: --title/--excerpt apply to a single article; "
+                 "use front-matter in each file when publishing several at once.")
+
+    # Resolve repo root (script lives in scripts/, so two levels up from here)
+    repo_root = Path(__file__).parent.parent
+    template_file = repo_root / "blog" / "article-template.html"
+    blog_data_file = repo_root / "data" / "blog-data.js"
+
+    for f in [template_file, blog_data_file]:
+        if not f.exists():
+            sys.exit(f"Error: required file not found: {f}")
+
+    published = []  # list of (article_dir, title)
+    for md_path in md_paths:
+        published.append(
+            publish_article(md_path, args, repo_root, template_file, blog_data_file)
+        )
+
+    titles = [title for _, title in published]
+    article_dirs = [d.relative_to(repo_root) for d, _ in published]
+
+    # Optionally push — a single combined commit for every article.
     if args.push:
-        print("Pushing to GitHub...")
-        git_push(str(repo_root), str(article_dir.relative_to(repo_root)), title)
-        print("Done! Article is live.")
+        print("\nPushing to GitHub...")
+        if len(titles) == 1:
+            commit_message = f"Add blog article: {titles[0]}"
+        else:
+            commit_message = f"Add {len(titles)} blog articles: " + ", ".join(titles)
+        git_push(str(repo_root), article_dirs, commit_message)
+        print("Done! Article(s) live.")
     else:
         print("\nNext steps:")
         print("  1. Test locally : ./scripts/test-local.sh")
-        print("  2. Publish      : git add . && git commit -m 'Add article' && git push")
+        print("  2. Publish      : git add . && git commit -m 'Add article(s)' && git push")
         print(f"\n  Or re-run with --push to do it automatically.")
 
 

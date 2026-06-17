@@ -1,4 +1,4 @@
-# The Leiden Clustering Algorithm
+# Understanding the Leiden Clustering Algorithm
 
 ## Introduction
 

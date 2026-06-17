@@ -1,10 +1,10 @@
 ---
-title: "Transformers architecture Part 1"
+title: "Understanding the Transformers architecture Part 1"
 date: 2026-05-10
 excerpt: "Deconstructing the Transformer: A Deep Dive into Attention Mechanics"
 thumbnail: true
 ---
-## Transformers series pt1. 
+## Understanding the Transformers series pt1. 
 # Deconstructing the Transformer: A Deep Dive into Attention Mechanics
 
 > *Author's Note: This post is adapted from my personal study notes while working through the [**"Super Study Guide"**](https://superstudy.guide/transformers-large-language-models/) book on Transformers.

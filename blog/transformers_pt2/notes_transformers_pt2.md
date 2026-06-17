@@ -1,4 +1,4 @@
-# Transformer architecture part2: let's have a walk inside the Encoder
+# Understanding the Transformer architecture part2: let's have a walk inside the Encoder
 
 > *Author's Note: Everything in here is from my study notes from the the **"Super Study Guide"** I am just writing it to share my transformers study journey. In Part 1, I covered the core math of Self-Attention and Multi-Head Attention. Now, I am going further into the encoder part of a transformers model.
 

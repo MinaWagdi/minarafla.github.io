@@ -1,4 +1,4 @@
-# Transformer architecture Part 3: Inside the Decoder
+# Understanding the Transformer architecture Part 3: Inside the Decoder
 
 Welcome again, here I continue sharing my journey learning the transformer architecture. Today I talk about the decoder part of a transformer model. 
 These are my personal notes studying the **"Super Study Guide": Transformers and Large Language Models** by Afshine Amidi and Shervine Amidi.

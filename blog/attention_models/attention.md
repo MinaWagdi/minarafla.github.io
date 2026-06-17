@@ -1,4 +1,4 @@
-# Intuitive introduction for attention models
+# Understanding the attention models intuitively
 Hi there, in this post, my notes for the "Attention for RNN Seq2Seq models by Shusen Wang" combined with other information from other resources I found on the internet. I put my references at the end.
 
 ## Revisiting seq2seq models: why do we need attention
