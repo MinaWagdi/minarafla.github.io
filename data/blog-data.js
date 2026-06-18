@@ -15,7 +15,7 @@ const blogArticles = [
                         {
         folder: 'modularity',
         title: "Understanding Modularity in Networks",
-        excerpt: "",
+        excerpt: "The Leiden algorithm part 2 :)",
         date: '2026-06-18',
         hasThumbnail: true
     },
