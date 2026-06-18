@@ -2,6 +2,8 @@
 
 After studying the Leiden Algorithm and the Louvain algorithm for community detection in graphs, where both algorithms try to optimize a score function which is the Modularity (or CPM in some cases), I was intrigued to deepen my readings on the Modularity function. Here it is in this blog post.
 
+> 📖 You can read more about it in my previous post: [Understanding the Leiden Clustering Algorithm](../leiden/index.html).
+
 Modularity tries to maximize the difference between the actual number of edges inside a community and the expected number of such edges. 
 
 ## Node-Level Perspective
