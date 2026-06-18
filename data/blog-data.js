@@ -23,7 +23,7 @@ const blogArticles = [
         folder: 'leiden',
         title: "Understanding the Leiden Clustering Algorithm",
         excerpt: "The Leiden clustering algorithm for community detection in a graph.",
-        date: '2026-06-17',
+        date: '2026-06-16',
         hasThumbnail: true
     },
 {
