@@ -1,8 +1,8 @@
-# Demystifying the Leiden Clustering Algorithm: A Personal Inside Look
+# Understanding the Leiden Clustering Algorithm: A Personal Inside Look
 
-Hello! I am the **Leiden clustering algorithm** (used for community detection). If you are dealing with large datasets and need fast speed and high scalability, I am the algorithm you are looking for. 
+Hello! Recently I came across a usecase where I needed a community detection algorithm so I thought about reviewing the **Leiden clustering algorithm** (used for community detection). This algorithm is compatible with large datasets, and is fast.
 
-My main job is to identify groups of nodes that are densely connected to each other compared to the rest of the network. I was introduced by Traag et al. from Leiden University in the Netherlands (which is where I get my name!).
+The main job is to identify groups of nodes that are densely connected to each other compared to the rest of the network. It was introduced by Traag et al. from Leiden University in the Netherlands (which is where I get my name!).
 
 Here is a structured transcription of your notes explaining exactly how I work.
 

@@ -68,7 +68,7 @@ This is the step that makes Leiden distinct. Instead of immediately aggregating 
 ---
 
 ## Visualizing the Process
-![](leiden.png)
+![This figure was taken from the article "From Louvain to Leiden: guaranteeing well-connected communities" by V.A. Traag, L. Waltman, and N.J. van Eck.](leiden.png)
 
-**Legend**
-* This figure was taken from the article "From Louvain to Leiden: guaranteeing well-connected communities" by V.A. Traag, L. Waltman, and N.J. van Eck.
+<!-- **Legend**
+* This figure was taken from the article "From Louvain to Leiden: guaranteeing well-connected communities" by V.A. Traag, L. Waltman, and N.J. van Eck. -->

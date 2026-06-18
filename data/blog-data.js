@@ -12,7 +12,14 @@
  */
 
 const blogArticles = [
-                    {
+                        {
+        folder: 'modularity',
+        title: "Understanding Modularity in Networks",
+        excerpt: "",
+        date: '2026-06-18',
+        hasThumbnail: false
+    },
+{
         folder: 'leiden',
         title: "Understanding the Leiden Clustering Algorithm",
         excerpt: "The Leiden clustering algorithm for community detection in a graph.",
