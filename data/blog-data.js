@@ -17,7 +17,7 @@ const blogArticles = [
         title: "Understanding Modularity in Networks",
         excerpt: "",
         date: '2026-06-18',
-        hasThumbnail: false
+        hasThumbnail: true
     },
 {
         folder: 'leiden',
