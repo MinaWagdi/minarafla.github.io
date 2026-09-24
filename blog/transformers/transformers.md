@@ -13,13 +13,15 @@ Since the introduction of the Transformer architecture, the landscape of natural
 As we will see, they are able to generate embeddings that are token aware, position aware and context aware.
 
 Let's dive into the main building block of a transformer model which is the self-attention model.
-First I will explain what is the Query, Key and Value to build one self attention block. Then how to put them together to create the multihead attention block. Finally I will give an overview how the transformer architecture is formed.
+First I will explain what is the Query, Key and Value to build one self attention block. Then how to put them together to create the multihead attention block. 
+<!-- Finally I will give an overview how the transformer architecture is formed. -->
 
 ## The Core of Context: The Self-Attention Mechanism
 
-At its heart, the self-attention mechanism allows each token to pay attention to all other tokens regardless of the distance between them. Unlike earlier sequential models, Transformers create representations where words are encoded as a function of their context - which is useful when the same word can have different meanings depedending on its surrounding words.
+At its heart, the self-attention mechanism allows each token to pay attention to all other tokens regardless of the distance between them. Unlike RNNs, which pass context step by step through hidden state, self-attention connects every pair of tokens in parallel, so distant tokens interact as easily as neighbour tokens.
+<!-- transformers create representations where words are encoded as a function of their context - which is useful when the same word can have different meanings depedending on its surrounding words. -->
 
-To achieve this, the model needs a way for a token to attend to another. We measure similarity between a given query ($q$) and each of the other $n$ keys ($K_i$). The model then weights the associated values ($V_i$) by their similarity.
+To achieve this, the model needs a way for a token to attend to another. We measure similarity between a given query ($q$) and each of the other $n$ keys ($K_i$), including its own key. The model then weights the associated values ($V_i$) by their similarity.
 
 ### But first, what is a query, key and value ? 
 A helpful analogy is to imagine a database search:
@@ -27,7 +29,8 @@ A helpful analogy is to imagine a database search:
 *   **Key ($K$):** The titles of the pages in that database.
 *   **Value ($V$):** The actual content you retrieve from the page.
   
-Actually $Q$ at the beginning is calculated as the input $X \cdot W_q$ where $W_q$ is a learnable parameter. So we allow the system to infer different representations for $X$ that in our analogy are the query, the title and the content of the page.
+$Q$, $K$, $V$ are all computed from the same input $X$ through three learnable parameters $W_q$, $W_k$, $W_v$
+So we allow the system to infer different representations for $X$ that in our analogy are the query, the title and the content of the page.
 
 ## The Mathematics of Attention
 The entire process is computed efficiently through matrix multiplication. The standard attention formula is defined as:
@@ -41,7 +44,7 @@ Let's break down why this specific mathematical formulation is used:
 3.  **The Scaling Factor ($\frac{1}{\sqrt{d_k}}$):** As the dimension $d_k$ grows, the dot products can explode into massive numbers. We divide by $\sqrt{d_k}$ because large numbers push the Softmax function into regions with a flat plateau (near 1 or 0). This creates a vanishing gradient problem for gradient descent, effectively stopping the model from learning. So now $\text{softmax}\left(\frac{q \cdot k_i}{\sqrt{d_k}}\right) = p_i$.
 4.  The $p_i$ will be considered the weight that we will use to weight the actual information $v_i$.
 
-It is worth noting that the computational complexity of this attention operation is $O(N^2)$.
+It is worth noting that the computational complexity of this attention operation is $O(n^2)$ because every token is compared with every other token.
 
 ## Multi-Head Attention (MHA): Committee of Experts
 
@@ -56,15 +59,15 @@ But why do we need several heads? Language is complex, and one word can have man
 
 Within each attention head, we multiply the inputs with projection matrices ($W^Q, W^K, W^V$) to obtain $Q, K,$ and $V$. 
 
-*   $Q = X \cdot W^Q$
-*   $K = X \cdot W^K$
-*   $V = X \cdot W^V$
+*   $Q_i = X \cdot W_i^Q$
+*   $K_i = X \cdot W_i^K$
+*   $V_i = X \cdot W_i^V$
 
-These weight matrices are the **learnable parameters** of the model. You might wonder: why not just use the raw input matrix $X$? We use these learnable projections to allow the model to have different points of view for the same word—specifically as a Query, Key, or Value. 
+These weight matrices are **learnable parameters**. You might wonder: why not just use the raw input matrix $X$? We use these learnable projections to allow the model to have different points of view for the same word—specifically as a Query, Key, or Value. 
 
 Once the attention operation is done for each head, the model concatenates all outputs ($O_i$). Finally, this concatenated output is multiplied by a final projection matrix ($W^O$) to produce an output.
 
-![Alt text](images/MHA.png)
+![Multi-Head Attention: h parallel heads, concatenated and projected by $W^O$](images/MHA.png)
 
 <!-- ## Bringing It Together: The Transformer Architecture
 
@@ -86,9 +89,9 @@ By combining the parallel processing power of Multi-Head Attention with the deep
 ![Dimensions inside an attention head](images/attention_head_dim.png)
 
 **A Crucial Distinction on Inputs:**
-* **Self-Attention (Encoder):** As we will see later in the Encoder part of the Transformer architecture, the inputs are all derived from the exact same source matrix: 
-    **Input Queries = Input Keys = Input Values = $X$**
-* **Cross-Attention (Decoder):** In the Decoder part of the Transformer architecture, these inputs **are not the same** (Queries come from the decoder sequence, while Keys and Values come from the encoder sequence).
+* **Self-Attention (Encoder, and maked in the decoder):** As we will see later in the Encoder part of the Transformer architecture, the inputs are all derived from the exact same source matrix: 
+    **Q, K, V come from the same sequence.**
+* **Cross-Attention (Decoder):** In the Decoder part of the Transformer architecture, queries come from the decoder sequence, while keys and values come from the encoder sequence.
 
 **Understanding the Variables:**
 * $d_{model}$: The dimension of the original word embedding (the input $X$). In the original Transformer paper, $d_{model} = 512$.

@@ -77,7 +77,10 @@ def md_to_html(md_text, md_file_path):
     tmp.write_text(md_text, encoding="utf-8")
     try:
         result = subprocess.run(
-            ["pandoc", str(tmp), "-f", "markdown+raw_html", "-t", "html", "--wrap=none"],
+            # lists_without_preceding_blankline: a list may directly follow a
+            # paragraph line (e.g. "...as follows:\n* item") without a blank line.
+            ["pandoc", str(tmp), "-f", "markdown+raw_html+lists_without_preceding_blankline",
+             "-t", "html", "--wrap=none"],
             capture_output=True, text=True, check=True,
         )
         return result.stdout
